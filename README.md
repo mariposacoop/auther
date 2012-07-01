@@ -11,17 +11,17 @@ Possible errorMessage values are as follows:
 - Malformed request
 - Not found
 
-Request: `GET /username {signature: xxxxxx, timestamp: 23523443, key: abc123}
-Response: `{success: true, authtoken:abe3458340ab}` or 
+*Request* `GET /username {signature: xxxxxx, timestamp: 23523443, key: abc123}`
+*Response* `{success: true, authtoken:abe3458340ab}` or 
 `{success: false, error: errorMessage}`
 
-Request: `GET /username {authtoken: abe3458340ab, key: abc123}
-Response: `{success: true}` or `{success: false, error: errorMessage}`
+*Request* `GET /username {authtoken: abe3458340ab, key: abc123}`
+*Response* `{success: true}` or `{success: false, error: errorMessage}`
 
-Request: `PUT /username {password: xxxxxx, key: abc123}
-Response: `{success: true, created: true/false}` where created is false
+*Request* `PUT /username {password: xxxxxx, key: abc123}`
+*Response* `{success: true, created: true/false}` where created is false
 if the username exists and password was reset or 
 `{success: false, error: errorMessage}`
 
-Request: `DELETE /username {key: abc123}
-Response: `{success: true}` or `{success: false, error: errorMessage}`
+*Request* `DELETE /username {key: abc123}`
+*Response* `{success: true}` or `{success: false, error: errorMessage}`
