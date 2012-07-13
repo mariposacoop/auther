@@ -12,9 +12,8 @@
     "url": "https://github.com/hackmastera/auther.git"
   },
   "dependencies": {
-    "bcrypt": "0.7.0",
-    "choreographer": "git://github.com/gsf/choreographer.git#7c40f3ed1df989f9ad9e04bc87684bd565cdadfd",
-    "dirty": "0.9.6"
+    "autheremin": "https://github.com/hackmastera/autheremin.git",
+    "choreographer": "git://github.com/gsf/choreographer.git#7c40f3ed1df989f9ad9e04bc87684bd565cdadfd"
   }, 
   "devDependencies": {
     "mocha": "1.3.0"
