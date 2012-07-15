@@ -10,9 +10,6 @@ We're borrowing some ideas here from http://slide.blorkmark.com. Signature shoul
 - Not found
 
 **Request** `GET /username {signature: xxxxxx, timestamp: 23523443, key: abc123}`<br>
-**Response** `{success: true, authtoken:abe3458340ab}` or `{success: false, error: errorMessage}`
-
-**Request** `GET /username {authtoken: abe3458340ab, key: abc123}`<br>
 **Response** `{success: true}` or `{success: false, error: errorMessage}`
 
 **Request** `PUT /username {password: xxxxxx, key: abc123}`<br>
