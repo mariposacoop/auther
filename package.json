@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "autheremin": "0.0.3",
-    "choreographer": "git://github.com/gsf/choreographer.git#7c40f3ed1df989f9ad9e04bc87684bd565cdadfd"
+    "choreographer": "git://github.com/gsf/choreographer.git#7c40f3ed1df989f9ad9e04bc87684bd565cdadfd",
+    "request": "2.9.203"
   }, 
   "devDependencies": {
     "mocha": "1.3.0"
