@@ -25,15 +25,16 @@ describe('auther', function () {
     });
   });
 
-  it('has a pid', function() {
+  it('has a pid', function(done) {
     assert(child.pid !== null);
+    done();
   });
 
 
-  xit('listens on port 4824 by default', function (done) {
+  it('listens on port 4824 by default', function (done) {
     request('http://localhost:4824', function(err, resp, body) {
-      //console.log(err);
       assert(resp.statusCode === 200);
+      done();
     });
   });
 
