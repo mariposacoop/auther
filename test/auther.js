@@ -20,13 +20,15 @@ describe('auther', function () {
   before( function (done) {
     // start the process so we can use it in all the tests
     child = cp.exec('node ../auther.js', function (err, stdout, stderr) {
-      //console.log(stdout);
       done();
     });
   });
 
   it('has a pid', function(done) {
     assert(child.pid !== null);
+    assert(child.pid !== undefined);
+    assert(child.pid !== '');
+    assert(child.pid !== false);
     done();
   });
 
