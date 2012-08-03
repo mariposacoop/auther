@@ -6,19 +6,8 @@ describe('auther', function () {
   var child,
       port = 6666;
 
-  it('exists', function () {
-
-    it('should not be null', function () {
-      assert.notEqual(auther, null);
-    });
-
-    it('should not be undefined', function () {
-      assert.notEqual(auther, undefined);
-    });
-  });
-
   before( function (done) {
-    child = fork('auther.js', null, {env: {PORT: port}});
+    child = fork('server.js', null, {env: {PORT: port}});
     child.on('message', function (msg) {
       if (msg === 'listening') {
         done();
