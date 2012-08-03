@@ -1,12 +1,20 @@
 var autheremin = require('autheremin');
 var http = require('http');
+var scalpel = require('scalpel');
+var settings = require('./settings');
+var stack = require('stack');
 var util = require('util');
+
 var port = process.env.PORT || 4824;
 
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello World\n');
-}).listen(port, function () {
+http.createServer(stack(
+  scalpel,
+  keyCheck,
+  function(req, res) {
+    res.writeHead(200)
+    res.end()
+  }
+)).listen(port, function () {
   util.log('Listening on port ' + port);
   
   if (process.send) {
@@ -14,3 +22,11 @@ http.createServer(function (req, res) {
   }
 });
 
+function keyCheck(req, res, next) {
+  if (req.body.key != settings.key) {
+    util.log('Stopped attempted access with key ' + req.body.key);
+    res.writeHead(401)
+    return res.end()
+  }
+  next();
+}
