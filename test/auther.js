@@ -1,10 +1,10 @@
 var assert = require("assert");
 var request = require("request");
-var cp = require("child_process");
+var fork = require("child_process").fork;
 
 describe('auther', function () {
-  var auther = require("../auther"),
-      child;
+  var child,
+      port = 6666;
 
   it('exists', function () {
 
@@ -18,10 +18,16 @@ describe('auther', function () {
   });
 
   before( function (done) {
-    // start the process so we can use it in all the tests
-    child = cp.exec('node ../auther.js', function (err, stdout, stderr) {
-      done();
+    child = fork('auther.js', null, {env: {PORT: port}});
+    child.on('message', function (msg) {
+      if (msg === 'listening') {
+        done();
+      }
     });
+  });
+
+  after( function () {
+    child.kill();
   });
 
   it('has a pid', function(done) {
@@ -33,8 +39,8 @@ describe('auther', function () {
   });
 
 
-  it('listens on port 4824 by default', function (done) {
-    request('http://localhost:4824', function(err, resp, body) {
+  it('listens on the specified port', function (done) {
+    request('http://127.0.0.1:' +port, function(err, resp, body) {
       assert(resp.statusCode === 200);
       done();
     });

@@ -1,10 +1,16 @@
-var autheremin = require('autheremin')
+var autheremin = require('autheremin');
 var http = require('http');
-var port = 4824;
+var util = require('util');
+var port = process.env.PORT || 4824;
 
 http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('Hello World\n');
-}).listen(port, '127.0.0.1');
+}).listen(port, function () {
+  util.log('Listening on port ' + port);
+  
+  if (process.send) {
+    process.send('listening');
+  }
+});
 
-console.log('Server running at http://127.0.0.1:' + port);
