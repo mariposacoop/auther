@@ -57,4 +57,37 @@ describe('auther', function() {
       done();
     });
   });
+
+  it('returns 200 when we send a DELETE request to localhost/someUser', function(done) {
+    request.del({
+      url: userUrl, 
+      body: {
+        key: 'SEKRIT'
+      },
+      json: true
+    }, function(err, resp, body) {
+      if (err) throw err;
+      assert(resp.statusCode === 200);
+      done();
+    });
+  });
+
+  it('returns success: true, created:true when we send a PUT request to localhost/someUser', function(done) {
+    request.put({
+      url: userUrl, 
+      body: {
+        password: 'somePassword',
+        key: 'SEKRIT'
+      },
+      json: true
+    }, function(err, resp, body) {
+      //console.log("body:", body);
+      if (err) throw err;
+      assert(body.success);
+      assert(body.created);
+      done();
+    });
+  });
+
+
 });
