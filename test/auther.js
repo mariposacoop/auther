@@ -1,6 +1,7 @@
-var assert = require("assert");
-var request = require("request");
-var fork = require("child_process").fork;
+var assert = require('assert');
+var crypto = require('crypto');
+var request = require('request');
+var fork = require('child_process').fork;
 
 describe('auther', function() {
   var child,
@@ -81,7 +82,7 @@ describe('auther', function() {
       },
       json: true
     }, function(err, resp, body) {
-      //console.log("body:", body);
+      //console.log('body:', body);
       if (err) throw err;
       assert(body.success);
       assert(body.created);
@@ -89,5 +90,25 @@ describe('auther', function() {
     });
   });
 
+  it('returns success: true when we send a GET request to localhost/someUser with the right password and signature', function(done) {
+    var ts = Math.round(Date.now() / 1000) + '';
+    var sig = crypto.createHmac('sha1', 'somePassword').update(ts).digest('hex');
+    request.get({
+      url: userUrl, 
+      body: {
+        timestamp: ts,
+        signature: sig,
+        key: 'SEKRIT'
+      },
+      json: true
+    }, function(err, resp, body) {
+      console.log('body:', body);
+      if (err) throw err;
+      assert(body.success);
+      done();
+    });
+  });
 
+  //it('deletes all users with a DELETE to /', function(done) {
+  //});
 });
