@@ -6,10 +6,11 @@ var fork = require('child_process').fork;
 describe('auther', function() {
   var child,
       port = 6666,
+      db = 'test/test.db',
       userUrl = 'http://127.0.0.1:' + port + '/someUser';
 
   before(function(done) {
-    child = fork('server.js', [], {env: {PORT: port}});
+    child = fork('server.js', [], {env: {PORT: port, DB: db}});
     child.on('message', function(msg) {
       if (msg == 'listening') {
         done();
@@ -102,7 +103,7 @@ describe('auther', function() {
       },
       json: true
     }, function(err, resp, body) {
-      console.log('body:', body);
+      //console.log('body:', body);
       if (err) throw err;
       assert(body.success);
       done();

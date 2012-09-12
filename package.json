@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "autheremin": "0.0.3",
+    "dirty": "0.9.6",
+    "rut": "0.0.1",
     "scalpel": "0.0.3",
     "stack": "0.1.0"
   }, 

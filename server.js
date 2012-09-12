@@ -1,16 +1,20 @@
-var autheremin = require('autheremin');
 var http = require('http');
+var rut = require('rut');
 var scalpel = require('scalpel');
 var settings = require('./settings');
 var stack = require('stack');
 var util = require('util');
 
 var port = process.env.PORT || 4824;
+var db = require('./db')(process.env.DB || 'auther.db');
+var autheremin = require('autheremin')(db);
+
 
 http.createServer(stack(
   scalpel,
   keyCheck,
-  processPut,
+  rut.put('/*', createUser),
+  rut.get('/*', validateUser),
   function(req, res) {
     res.writeHead(200)
     res.end()
@@ -32,20 +36,26 @@ function keyCheck(req, res, next) {
   next();
 }
 
-function processPut(req, res, next) {
+function createUser(req, res, next, username) {
   // TODO: actually process the put by adding the user to the db.
-  if (req.method === 'PUT') {
-    //util.log('got method ' + req.method);
-    //util.log('got user ' + req.url.substr(1));
-    if (req.body.password) {
-      //util.log('got password ' + req.body.password);
-    }
+  //util.log('got method ' + req.method);
+  //util.log('got user ' + req.url.substr(1));
+  if (!req.body.password) {
+    next();
+    //util.log('got password ' + req.body.password);
+  }
+  autheremin.create(username, req.body.password, function(err) {
+    // TODO: extend autheremin to get created or overwritten
+    if (err) next(err);
     res.writeHead(200);
     res.end(JSON.stringify({
       success: true,
       created: true
     }));
-  } else {
-    next();
-  }
+  });
+}
+
+function validateUser(req, res, next, username) {
+  res.writeHead(200);
+  res.end();
 }
