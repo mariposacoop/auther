@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/hackmastera/auther.png)](http://travis-ci.org/hackmastera/auther)
+[![Build Status](https://secure.travis-ci.org/mariposacoop/auther.png)](http://travis-ci.org/mariposacoop/auther)
 
 auther
 ======
