@@ -1,12 +1,13 @@
 var assert = require('assert');
-var crypto = require('crypto');
 var request = require('request');
 var fork = require('child_process').fork;
 
 describe('auther', function() {
-  var child,
-      port = 6666,
+  var apiKey = 'SEKRIT',
+      child,
       db = 'test/test.db',
+      port = 6666,
+      userPass = 'somePassword',
       userUrl = 'http://127.0.0.1:' + port + '/someUser';
 
   before(function(done) {
@@ -22,19 +23,11 @@ describe('auther', function() {
     child.kill();
   });
 
-  it('has a pid', function(done) {
-    assert(child.pid !== null);
-    assert(child.pid !== undefined);
-    assert(child.pid !== '');
-    assert(child.pid !== false);
-    done();
-  });
-
   it('returns 401 when we send a PUT request with the wrong API key', function(done) {
     request.put({
       url: userUrl, 
       body: {
-        password: 'somePassword',
+        password: userPass,
         key: 'NOT_SEKRIT'
       },
       json: true
@@ -45,17 +38,51 @@ describe('auther', function() {
     });
   });
 
-  it('returns 200 when we send a PUT request to localhost/someUser', function(done) {
+  it('returns 200 and ok: true, created: true when we send a PUT request to localhost/someUser', function(done) {
     request.put({
       url: userUrl, 
       body: {
-        password: 'somePassword',
-        key: 'SEKRIT'
+        password: userPass,
+        key: apiKey
       },
       json: true
     }, function(err, resp, body) {
       if (err) throw err;
       assert(resp.statusCode === 200);
+      assert(body.ok);
+      assert(body.created);
+      done();
+    });
+  });
+
+  it('returns ok: true when we send a GET request to localhost/someUser with the right password', function(done) {
+    request.get({
+      url: userUrl, 
+      body: {
+        password: userPass,
+        key: apiKey
+      },
+      json: true
+    }, function(err, resp, body) {
+      //console.log('body:', body);
+      if (err) throw err;
+      assert(body.ok);
+      done();
+    });
+  });
+
+  it('returns ok: false when we send a GET request to localhost/someUser with the wrong password', function(done) {
+    request.get({
+      url: userUrl, 
+      body: {
+        password: 'badPass',
+        key: apiKey
+      },
+      json: true
+    }, function(err, resp, body) {
+      //console.log('body:', body);
+      if (err) throw err;
+      assert(!body.ok);
       done();
     });
   });
@@ -64,7 +91,7 @@ describe('auther', function() {
     request.del({
       url: userUrl, 
       body: {
-        key: 'SEKRIT'
+        key: apiKey
       },
       json: true
     }, function(err, resp, body) {
@@ -74,42 +101,19 @@ describe('auther', function() {
     });
   });
 
-  it('returns success: true, created:true when we send a PUT request to localhost/someUser', function(done) {
-    request.put({
-      url: userUrl, 
-      body: {
-        password: 'somePassword',
-        key: 'SEKRIT'
-      },
-      json: true
-    }, function(err, resp, body) {
-      //console.log('body:', body);
-      if (err) throw err;
-      assert(body.success);
-      assert(body.created);
-      done();
-    });
-  });
-
-  it('returns success: true when we send a GET request to localhost/someUser with the right password and signature', function(done) {
-    var ts = Math.round(Date.now() / 1000) + '';
-    var sig = crypto.createHmac('sha1', 'somePassword').update(ts).digest('hex');
+  it('returns ok: false when we send a GET request to a deleted localhost/someUser', function(done) {
     request.get({
       url: userUrl, 
       body: {
-        timestamp: ts,
-        signature: sig,
-        key: 'SEKRIT'
+        password: userPass,
+        key: apiKey
       },
       json: true
     }, function(err, resp, body) {
       //console.log('body:', body);
       if (err) throw err;
-      assert(body.success);
+      assert(!body.ok);
       done();
     });
   });
-
-  //it('deletes all users with a DELETE to /', function(done) {
-  //});
 });

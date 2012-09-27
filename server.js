@@ -6,25 +6,37 @@ var stack = require('stack');
 var util = require('util');
 
 var port = process.env.PORT || 4824;
-var db = require('./db')(process.env.DB || 'auther.db');
+var db = require('./db');
 var autheremin = require('autheremin')(db);
 
-
-http.createServer(stack(
-  scalpel,
-  keyCheck,
-  rut.put('/*', createUser),
-  rut.get('/*', validateUser),
-  function(req, res) {
-    res.writeHead(200)
-    res.end()
+stack.errorHandler = function error(req, res, err) {
+  res.setHeader('Content-Type', 'application/json');
+  if (err) {
+    console.error(err.stack);
+    res.writeHead(500);
+    res.end(JSON.stringify({
+      ok: false, 
+      error: err.message
+    }));
+    return;
   }
-)).listen(port, function () {
-  util.log('Listening on port ' + port);
+  res.writeHead(404);
+  res.end('{"ok":false, "error":"not found"}');
+};
 
-  if (process.send) {
-    process.send('listening');
-  }
+db.on('load', function() { 
+  http.createServer(stack(
+    scalpel,
+    keyCheck,
+    rut.put('/*', require('./routes/create')),
+    rut.get('/*', require('./routes/validate')),
+    rut.delete('/*', require('./routes/remove'))
+  )).listen(port, function () {
+    util.log('Listening on port ' + port);
+    if (process.send) {
+      process.send('listening');
+    }
+  });
 });
 
 function keyCheck(req, res, next) {
@@ -34,28 +46,4 @@ function keyCheck(req, res, next) {
     return res.end()
   }
   next();
-}
-
-function createUser(req, res, next, username) {
-  // TODO: actually process the put by adding the user to the db.
-  //util.log('got method ' + req.method);
-  //util.log('got user ' + req.url.substr(1));
-  if (!req.body.password) {
-    next();
-    //util.log('got password ' + req.body.password);
-  }
-  autheremin.create(username, req.body.password, function(err) {
-    // TODO: extend autheremin to get created or overwritten
-    if (err) next(err);
-    res.writeHead(200);
-    res.end(JSON.stringify({
-      success: true,
-      created: true
-    }));
-  });
-}
-
-function validateUser(req, res, next, username) {
-  res.writeHead(200);
-  res.end();
 }
