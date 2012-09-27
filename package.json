@@ -12,7 +12,7 @@
     "url": "https://github.com/hackmastera/auther.git"
   },
   "dependencies": {
-    "autheremin": "0.0.3",
+    "autheremin": "0.0.4",
     "dirty": "0.9.6",
     "rut": "0.0.1",
     "scalpel": "0.0.3",
