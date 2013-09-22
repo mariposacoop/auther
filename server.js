@@ -27,7 +27,7 @@ stack.errorHandler = function error(req, res, err) {
 db.on('load', function() { 
   http.createServer(stack(
     scalpel,
-    keyCheck,
+    rut('/', require('./routes')),
     rut.put('/*', require('./routes/create')),
     rut.get('/*', require('./routes/validate')),
     rut.delete('/*', require('./routes/remove'))
@@ -38,12 +38,3 @@ db.on('load', function() {
     }
   });
 });
-
-function keyCheck(req, res, next) {
-  if (req.body.key != settings.key) {
-    util.log('Stopped attempted access with key ' + req.body.key);
-    res.writeHead(401)
-    return res.end()
-  }
-  next();
-}
