@@ -3,8 +3,7 @@ var request = require('request');
 var fork = require('child_process').fork;
 
 describe('auther', function() {
-  var apiKey = 'SEKRIT',
-      child,
+  var child,
       db = 'test/test.db',
       port = 6666,
       userPass = 'somePassword',
@@ -23,27 +22,11 @@ describe('auther', function() {
     child.kill();
   });
 
-  it('returns 401 when we send a PUT request with the wrong API key', function(done) {
-    request.put({
-      url: userUrl, 
-      body: {
-        password: userPass,
-        key: 'NOT_SEKRIT'
-      },
-      json: true
-    }, function(err, resp, body) {
-      if (err) throw err;
-      assert(resp.statusCode === 401);
-      done();
-    });
-  });
-
   it('returns 200 and ok: true, created: true when we send a PUT request to localhost/someUser', function(done) {
     request.put({
       url: userUrl, 
       body: {
-        password: userPass,
-        key: apiKey
+        password: userPass
       },
       json: true
     }, function(err, resp, body) {
@@ -59,8 +42,7 @@ describe('auther', function() {
     request.get({
       url: userUrl, 
       body: {
-        password: userPass,
-        key: apiKey
+        password: userPass
       },
       json: true
     }, function(err, resp, body) {
@@ -75,8 +57,7 @@ describe('auther', function() {
     request.get({
       url: userUrl, 
       body: {
-        password: 'badPass',
-        key: apiKey
+        password: 'badPass'
       },
       json: true
     }, function(err, resp, body) {
@@ -90,9 +71,6 @@ describe('auther', function() {
   it('returns 200 when we send a DELETE request to localhost/someUser', function(done) {
     request.del({
       url: userUrl, 
-      body: {
-        key: apiKey
-      },
       json: true
     }, function(err, resp, body) {
       if (err) throw err;
@@ -105,8 +83,7 @@ describe('auther', function() {
     request.get({
       url: userUrl, 
       body: {
-        password: userPass,
-        key: apiKey
+        password: userPass
       },
       json: true
     }, function(err, resp, body) {
