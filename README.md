@@ -7,15 +7,14 @@ authentication module
 
 API
 ---
-Possible errorMessage values are as follows:
-- Malformed request
-- Not found
+`GET /username {"password": "xxxxxx"}`
+- `200 {"ok": true}` if found
+- `400 {"ok": false, "error": "Bad request"}` if request not understood
+- `404 {"ok": false, "error": "Not found"}` if username with that password not found
 
-**Request** `GET /username {password: xxxxxx}`<br>
-**Response** `{ok: true}` or `{ok: false, error: errorMessage}`
+`PUT /username {"password": "xxxxxx"}`
+- `200 {"ok": true}` if created
+- `400 {"ok": false, "error": "Bad request"}` if request not understood
 
-**Request** `PUT /username {password: xxxxxx}`<br>
-**Response** `{ok: true, created: true/false}` where created is false if the username exists and password was reset or `{ok: false, error: errorMessage}`
-
-**Request** `DELETE /username`<br>
-**Response** `{ok: true}` or `{ok: false, error: errorMessage}`
+`DELETE /username`
+- `200 {"ok": true}` if deleted
