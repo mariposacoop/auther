@@ -7,7 +7,6 @@ var util = require('util');
 
 var port = process.env.PORT || 4824;
 var db = require('./db');
-var autheremin = require('autheremin')(db);
 
 stack.errorHandler = function error(req, res, err) {
   res.setHeader('Content-Type', 'application/json');
