@@ -1,12 +1,8 @@
-[![Build Status](https://secure.travis-ci.org/mariposacoop/auther.png)](http://travis-ci.org/mariposacoop/auther)
-
-auther
-======
+# auther [![Build Status](https://secure.travis-ci.org/mariposacoop/auther.png)](http://travis-ci.org/mariposacoop/auther)
 
 authentication module 
 
-API
----
+## API
 
 ### GET /username `{"password": "xxxxxx"}`
 - 200 `{"ok": true}` if found
