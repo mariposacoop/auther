@@ -1,6 +1,6 @@
 # auther [![Build Status](https://secure.travis-ci.org/mariposacoop/auther.png)](http://travis-ci.org/mariposacoop/auther)
 
-authentication module 
+Dirt-simple authentication server for use within trusted networks.
 
 ## API
 
