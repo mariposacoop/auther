@@ -1,96 +1,94 @@
-var assert = require('assert');
 var request = require('request');
 var fork = require('child_process').fork;
+var test = require('tap').test;
 
-describe('auther', function() {
-  var child,
-      db = 'test/test.db',
-      port = 6666,
-      userPass = 'somePassword',
-      userUrl = 'http://127.0.0.1:' + port + '/someUser';
 
-  before(function(done) {
-    child = fork('server.js', [], {env: {PORT: port, DB: db}});
-    child.on('message', function(msg) {
-      if (msg == 'listening') {
-        done();
-      }
-    });
+var child;
+var db = 'test.db';
+var port = 6666;
+var userPass = 'somePassword';
+var userUrl = 'http://127.0.0.1:' + port + '/someUser';
+
+test('setup', function (t) {
+  t.plan(1);
+  child = fork(__dirname + '/../server.js', [], {env: {PORT: port, DB: db}});
+  child.on('message', function(msg) {
+    if (msg == 'online') {
+      t.ok(true, 'Server is online');
+    }
   });
+});
 
-  after(function() {
-    child.kill();
+test('a PUT request to localhost/someUser returns 200 and ok: true, created: true', function (t) {
+  t.plan(3);
+  request.put({
+    url: userUrl, 
+    body: {
+      password: userPass
+    },
+    json: true
+  }, function(err, resp, body) {
+    if (err) throw err;
+    t.equal(resp.statusCode, 200);
+    t.ok(body.ok);
+    t.ok(body.created);
   });
+});
 
-  it('returns 200 and ok: true, created: true when we send a PUT request to localhost/someUser', function(done) {
-    request.put({
-      url: userUrl, 
-      body: {
-        password: userPass
-      },
-      json: true
-    }, function(err, resp, body) {
-      if (err) throw err;
-      assert(resp.statusCode === 200);
-      assert(body.ok);
-      assert(body.created);
-      done();
-    });
+test('a GET request to localhost/someUser with the right password returns ok: true', function(t) {
+  t.plan(1);
+  request.get({
+    url: userUrl, 
+    body: {
+      password: userPass
+    },
+    json: true
+  }, function(err, resp, body) {
+    if (err) throw err;
+    t.ok(body.ok);
   });
+});
 
-  it('returns ok: true when we send a GET request to localhost/someUser with the right password', function(done) {
-    request.get({
-      url: userUrl, 
-      body: {
-        password: userPass
-      },
-      json: true
-    }, function(err, resp, body) {
-      //console.log('body:', body);
-      if (err) throw err;
-      assert(body.ok);
-      done();
-    });
+test('a GET request to localhost/someUser with the wrong password returns ok: false', function(t) {
+  t.plan(1);
+  request.get({
+    url: userUrl, 
+    body: {
+      password: 'badPass'
+    },
+    json: true
+  }, function(err, resp, body) {
+    if (err) throw err;
+    t.ok(!body.ok);
   });
+});
 
-  it('returns ok: false when we send a GET request to localhost/someUser with the wrong password', function(done) {
-    request.get({
-      url: userUrl, 
-      body: {
-        password: 'badPass'
-      },
-      json: true
-    }, function(err, resp, body) {
-      //console.log('body:', body);
-      if (err) throw err;
-      assert(!body.ok);
-      done();
-    });
+test('a DELETE request to localhost/someUser returns 200', function(t) {
+  t.plan(1);
+  request.del({
+    url: userUrl, 
+    json: true
+  }, function(err, resp, body) {
+    if (err) throw err;
+    t.equal(resp.statusCode, 200);
   });
+});
 
-  it('returns 200 when we send a DELETE request to localhost/someUser', function(done) {
-    request.del({
-      url: userUrl, 
-      json: true
-    }, function(err, resp, body) {
-      if (err) throw err;
-      assert(resp.statusCode === 200);
-      done();
-    });
+test('a GET request to a deleted localhost/someUser returns ok: false', function(t) {
+  t.plan(1);
+  request.get({
+    url: userUrl, 
+    body: {
+      password: userPass
+    },
+    json: true
+  }, function(err, resp, body) {
+    if (err) throw err;
+    t.ok(!body.ok);
   });
+});
 
-  it('returns ok: false when we send a GET request to a deleted localhost/someUser', function(done) {
-    request.get({
-      url: userUrl, 
-      body: {
-        password: userPass
-      },
-      json: true
-    }, function(err, resp, body) {
-      //console.log('body:', body);
-      if (err) throw err;
-      assert(!body.ok);
-      done();
-    });
-  });
+test('teardown', function (t) {
+  child.kill();
+  t.end();
 });
