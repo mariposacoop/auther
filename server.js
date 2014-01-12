@@ -32,7 +32,7 @@ db.on('load', function() {
   )).listen(port, function () {
     console.log('Listening on port ' + port);
     if (process.send) {
-      process.send('listening');
+      process.send('online');
     }
   });
 });
