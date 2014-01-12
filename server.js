@@ -3,7 +3,6 @@ var rut = require('rut');
 var scalpel = require('scalpel');
 var settings = require('./settings');
 var stack = require('stack');
-var util = require('util');
 
 var port = process.env.PORT || 4824;
 var db = require('./db');
@@ -31,7 +30,7 @@ db.on('load', function() {
     rut.get('/*', require('./routes/validate')),
     rut.delete('/*', require('./routes/remove'))
   )).listen(port, function () {
-    util.log('Listening on port ' + port);
+    console.log('Listening on port ' + port);
     if (process.send) {
       process.send('listening');
     }
